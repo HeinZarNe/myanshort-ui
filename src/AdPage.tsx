@@ -1,41 +1,47 @@
+import { redirect, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import RedirectBtn from "./RedirectBtn";
-import { getOriginalUrl } from "./api";
-import { useParams } from "react-router-dom";
 
-function AdPage() {
+const AdPage = () => {
   const { shortId } = useParams();
-  const [url, setUrl] = useState<string>("");
+  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(
+    Array(5).fill(false)
+  );
 
   useEffect(() => {
-    const fetchUrl = async () => {
-      if (shortId) {
-        const response = await getOriginalUrl(shortId);
-        const { originalUrl } = response.data;
-        setUrl(originalUrl);
-      }
-    };
-    fetchUrl();
-  }, [shortId]);
+    if (shortId?.length === 0) {
+      redirect("/");
+    }
+  }, []);
+  const handleImageLoad = (index: number) => {
+    setImagesLoaded((prev) => {
+      const newLoaded = [...prev];
+      newLoaded[index] = true;
+      return newLoaded;
+    });
+  };
+
+  const allImagesLoaded = imagesLoaded.every((loaded) => loaded);
 
   return (
     <>
       <div className="relative text-white text-lg flex flex-col bg-stone-900 max-w-screen min-h-screen items-center justify-center gap-2 p-3">
-        <a href="#btn">Scroll down to get link ⬇</a>
+        <a href="#btn">Get the Link ⬇</a>
         {Array(5)
           .fill(null)
           .map((_, index) => (
             <img
               key={index}
               src={`https://placehold.co/800x130/?text=Ads+${index + 1}`}
-              className={``}
+              className=""
               alt="ads"
+              onLoad={() => handleImageLoad(index)}
             />
           ))}
-        <RedirectBtn link={url} />
+        {allImagesLoaded && <RedirectBtn shortId={shortId || ""} />}
       </div>
     </>
   );
-}
+};
 
 export default AdPage;

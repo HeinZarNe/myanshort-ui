@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function RedirectBtn({ link }: { link: string }) {
+export default function RedirectBtn({ shortId }: { shortId: string }) {
   const [counter, setCounter] = useState(10);
   const [isDisabled, setIsDisabled] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,7 +36,9 @@ export default function RedirectBtn({ link }: { link: string }) {
     };
   }, [counter]);
 
-  const formatLink = (url: string) => {
+  const formatLink = (shortId: string) => {
+    const api = import.meta.env.VITE_BACKEND_API;
+    const url = `${api}/${shortId}`;
     if (!/^https?:\/\//i.test(url)) {
       return `https://${url}`;
     }
@@ -51,7 +53,7 @@ export default function RedirectBtn({ link }: { link: string }) {
       }`}
     >
       <a
-        href={isDisabled ? "#" : formatLink(link)}
+        href={isDisabled ? "#" : formatLink(shortId)}
         className={isDisabled ? "pointer-events-none" : ""}
       >
         {isDisabled ? `wait ${counter}s` : "Go to Link"}

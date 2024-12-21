@@ -1,14 +1,19 @@
 import axios from "axios";
-import { validateURL } from "./Home";
-const API_URL = "http://localhost:5000";
+import { validateURL } from "./ShortUrl";
+import { AdLink } from "./contexStore";
+const API_URL = import.meta.env.VITE_BACKEND_API;
 
-export const shortenUrl = async (originalUrl: string) => {
+export const shortenUrl = async (
+  originalUrl: string
+): Promise<AdLink | null> => {
   const isValid = validateURL(originalUrl);
   if (!isValid) {
-    return;
+    return null;
   }
   try {
-    const response = await axios.post(`${API_URL}/shorten`, { originalUrl });
+    const response = await axios.post(`${API_URL}/shorten`, {
+      originalUrl,
+    });
     return response.data;
   } catch (error) {
     console.error("Error shortening URL:", error);
@@ -16,12 +21,28 @@ export const shortenUrl = async (originalUrl: string) => {
   }
 };
 
-export const getOriginalUrl = async (shortId: string) => {
+export const getClickCounts = async (shortId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/${shortId}`);
-    return response;
+    const response = await axios.get(`${API_URL}/click_count/${shortId}`);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+export const getAdLinks = async (): Promise<AdLink[] | undefined> => {
+  try {
+    const response = await axios.get(`${API_URL}/adlink`);
+    return response.data;
   } catch (error) {
-    console.error("Error geting Url:", error);
-    throw error;
+    console.error(error);
+  }
+};
+
+export const deleteAd = async (shortId: string): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/adlink/${shortId}`);
+  } catch (err) {
+    console.error(err);
   }
 };
