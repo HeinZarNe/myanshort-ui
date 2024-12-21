@@ -58,8 +58,8 @@ export default function AdLinkList() {
     }
   };
   return (
-    <div className="container mx-auto p-4 ">
-      <div className="flex flex-row items-center justify-between flex-wrap gap-1 mb-4">
+    <div className="container mx-auto sm:p-4 ">
+      <div className="flex flex-row items-center justify-center sm:justify-between flex-wrap gap-1 mb-4">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">Links</h1>
           <div className="flex flex-row items-center gap-1">
@@ -96,29 +96,33 @@ export default function AdLinkList() {
           {filteredAndSortedData.map((item, index) => (
             <div
               key={index}
-              className="p-4 border rounded-lg shadow-md flex flex-row flex-wrap gap-1 justify-between"
+              className="p-4 border rounded-lg shadow-md relative"
             >
-              <div>
+              <div className="w-full">
                 <p className="text-lg font-semibold">Original URL:</p>
-                <a
-                  className="text-blue-500"
-                  href={item.originalUrl}
-                  target="_blank"
-                >
-                  {item.originalUrl}
-                </a>
+                <div className="max-w-full truncate overflow-hidden whitespace-nowrap">
+                  <a
+                    className="text-blue-500 truncate overflow-hidden whitespace-nowrap"
+                    href={item.originalUrl}
+                    target="_blank"
+                  >
+                    {item.originalUrl}
+                  </a>
+                </div>
                 <p className="text-lg font-semibold mt-2">Ad Link:</p>
-                <a
-                  className="text-blue-500"
-                  href={`${location.origin}/ad/${item.shortId}`}
-                  target="_blank"
-                >
-                  {`${location.origin}/ad/${item.shortId}`}
-                </a>
+                <div className="max-w-full truncate overflow-hidden whitespace-nowrap">
+                  <a
+                    className="text-blue-500 "
+                    href={`${location.origin}/ad/${item.shortId}`}
+                    target="_blank"
+                  >
+                    {`${location.origin}/ad/${item.shortId}`}
+                  </a>
+                </div>
                 <p className="text-lg font-semibold mt-2">Click:</p>
                 <p className="text-gray-700">{item.clicks}</p>
               </div>
-              <div>
+              <div className="absolute top-5 right-3">
                 <BiTrash
                   onClick={(_) => handleDelete(item.shortId)}
                   className="text-gray-600 hover:text-red-500 cursor-pointer hover:bg-stone-100  rounded-md bg-opacity-15"
@@ -133,48 +137,52 @@ export default function AdLinkList() {
           <table className="min-w-full bg-white border border-gray-200">
             <thead>
               <tr>
-                <th className="px-4 py-2 border-b">Original URL</th>
-                <th className="px-4 py-2 border-b">Ad Url</th>
-                <th className="px-4 py-2 border-b">
-                  Clicks
-                  <button onClick={handleSortClicks} className="ml-2">
-                    <FaSortDown
-                      className={`h-full ${
-                        isSortByClicksDescending
-                          ? "text-blue-500"
-                          : "text-gray-500"
-                      }`}
-                    />
-                  </button>
+                <th className="px-4 py-2 border-b whitespace-nowrap">
+                  Original URL
                 </th>
-                <th className="px-4 py-2 border-b">Created At</th>
-                <th className="px-4 py-2 border-b"></th>
+                <th className="px-4 py-2 border-b whitespace-nowrap">Ad Url</th>
+                <th className="px-4 py-2 border-b whitespace-nowrap">
+                  <div className="flex items-baseline">
+                    Clicks
+                    <button onClick={handleSortClicks} className="ml-2">
+                      <FaSortDown
+                        className={`h-full ${
+                          isSortByClicksDescending
+                            ? "text-blue-500"
+                            : "text-gray-500"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </th>
+                <th className="px-4 py-2 border-b whitespace-nowrap">
+                  Created At
+                </th>
+                <th className="px-4 py-2 border-b whitespace-nowrap"></th>
               </tr>
             </thead>
             <tbody>
               {filteredAndSortedData.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-100">
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-4 py-2 border-b  whitespace-nowrap">
                     <a
-                      className="text-blue-500"
+                      className="text-blue-500 "
                       href={item.originalUrl}
                       target="_blank"
                     >
                       {item.originalUrl}
                     </a>
                   </td>
-                  <td className="px-4 py-2 border-b text-center">
+                  <td className="px-4 py-2 border-b">
                     <a
-                      className="text-blue-500"
+                      className="text-blue-500 whitespace-nowrap"
                       href={`${location.origin}/ad/${item.shortId}`}
                       target="_blank"
                     >
                       {`${location.origin}/ad/${item.shortId}`}
                     </a>
                   </td>
-                  <td className="px-4 py-2 border-b text-center">
-                    {item.clicks}
-                  </td>
+                  <td className="px-4 py-2 border-b">{item.clicks}</td>
                   <td className="px-4 py-2 border-b text-center">
                     {dayjs(item.createdAt).format("DD.MM.YYYY")}
                   </td>

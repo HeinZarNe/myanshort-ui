@@ -24,7 +24,7 @@ export default function SearchBar({
 
   return (
     <div className="flex items-center border-b border-gray-300 py-2">
-      <FaSearch className="text-gray-500 mr-3" />
+      <FaSearch className="text-gray-500 " size={25} />
       <input
         type="text"
         className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"

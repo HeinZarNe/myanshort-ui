@@ -98,18 +98,17 @@ export default function ShortUrl() {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-2 p-4 bg-white shadow-md rounded-lg">
-      <span className="text-lg font-semibold text-gray-700">Add Ads</span>
+    <div className="flex flex-col items-center  p-2 w-full xs:w-fit sm:p-4 bg-white shadow-md rounded-lg">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-row justify-center flex-wrap items-center gap-4"
+        className="flex flex-row justify-center flex-wrap items-center  gap-4 w-full xs:w-fit"
       >
         <input
           type="text"
           placeholder="Enter link"
           value={inputValue}
           onChange={handleChange}
-          className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 ${
+          className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 flex-1 ${
             isValid
               ? "border-gray-300 focus:ring-blue-500"
               : "border-red-500 focus:ring-red-500"
@@ -130,23 +129,25 @@ export default function ShortUrl() {
         </p>
       )}
       {shortId && (
-        <div className="mt-4 p-2 bg-green-100 border border-green-400 rounded-md flex items-center">
+        <div className="mt-4 p-1 w-full xs:w-fit sm:p-2 bg-green-100 border border-green-400 rounded-md flex flex-col sm:flex-row items-center">
           <span className="text-green-700">New Link: </span>
-          <a
-            href={`${location.origin}/ad/${shortId}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 text-blue-500 underline"
-          >
-            {`${location.origin}/ad/${shortId}`}
-          </a>
-          <button
-            onClick={copyToClipboard}
-            className="ml-2 text-gray-500 hover:text-gray-700"
-            title="Copy to clipboard"
-          >
-            <FaClipboard />
-          </button>
+          <div className="flex flex-row items-center max-w-[250px] p-1 sm:p-2 gap-1 sm:gap-2">
+            <a
+              href={`${location.origin}/ad/${shortId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className=" text-blue-500 underline truncate overflow-hidden"
+            >
+              {`${location.origin}/ad/${shortId}`}
+            </a>
+            <button
+              onClick={copyToClipboard}
+              className=" text-gray-500 hover:text-gray-700"
+              title="Copy to clipboard"
+            >
+              <FaClipboard />
+            </button>
+          </div>
         </div>
       )}
       <ToastContainer
