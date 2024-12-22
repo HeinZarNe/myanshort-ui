@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import axios from "axios";
 import { validateURL } from "./ShortUrl";
 import { AdLink } from "./contexStore";
@@ -32,7 +33,7 @@ export const getClickCounts = async (shortId: string) => {
 
 export const getAdLinks = async (): Promise<AdLink[] | undefined> => {
   try {
-    const response = await axios.get(`${API_URL}/adlink`);
+    const response = await axios.get(`${API_URL}/urls`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -41,8 +42,28 @@ export const getAdLinks = async (): Promise<AdLink[] | undefined> => {
 
 export const deleteAd = async (shortId: string): Promise<void> => {
   try {
-    await axios.delete(`${API_URL}/adlink/${shortId}`);
+    await axios.delete(`${API_URL}/urls/${shortId}`);
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const registerUser = async (formData: {}): Promise<
+  AxiosResponse<any, any> | undefined
+> => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/register`, formData);
+    return response;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/users/profile`);
+    return response;
+  } catch (err) {
+    throw err;
   }
 };
