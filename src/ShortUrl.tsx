@@ -1,13 +1,11 @@
 import { useContext, useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { shortenUrl } from "./api";
-import { AdLink, AdLinkContext } from "./contexStore";
+import { AdLinkContext } from "./context/adStore";
 import dayjs from "dayjs";
 import { FaClipboard } from "react-icons/fa";
+import { AdLink } from "./types";
+import { notify } from "./Routes";
 
-export const notify = (message: string, type: "success" | "error") => {
-  toast[type](message);
-};
 export const validateURL = (url: string) => {
   const pattern = new RegExp(
     "^(https?:\\/\\/)?" + // protocol
@@ -150,14 +148,6 @@ export default function ShortUrl() {
           </div>
         </div>
       )}
-      <ToastContainer
-        autoClose={1000}
-        hideProgressBar
-        pauseOnFocusLoss={false}
-        pauseOnHover={false}
-        limit={2}
-        position="top-right"
-      />
     </div>
   );
 }

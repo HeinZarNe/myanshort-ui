@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState, useMemo } from "react";
 import { deleteAd, getAdLinks } from "./api";
-import { AdLinkContext } from "./contexStore";
+import { AdLinkContext } from "./context/adStore";
 import SearchBar from "./SearchBar";
 import { FaBoxOpen, FaSortDown, FaTable, FaTh } from "react-icons/fa";
 import dayjs from "dayjs";
 import { BiTrash } from "react-icons/bi";
-import { notify } from "./ShortUrl";
+import { notify } from "./Routes";
+import { AdGridCard } from "./AdGridCard";
 
 export default function AdLinkList() {
   const context = useContext(AdLinkContext);
@@ -28,7 +29,6 @@ export default function AdLinkList() {
     fetchData();
   }, [setData]);
 
-  // Filtered and sorted data (using useMemo for efficiency)
   const filteredAndSortedData = useMemo(() => {
     let filtered = data.filter(
       (item) =>
@@ -94,42 +94,7 @@ export default function AdLinkList() {
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-4">
           {filteredAndSortedData.map((item, index) => (
-            <div
-              key={index}
-              className="p-4 border rounded-lg shadow-md relative"
-            >
-              <div className="w-full">
-                <p className="text-lg font-semibold">Original URL:</p>
-                <div className="max-w-full truncate overflow-hidden whitespace-nowrap">
-                  <a
-                    className="text-blue-500 truncate overflow-hidden whitespace-nowrap"
-                    href={item.originalUrl}
-                    target="_blank"
-                  >
-                    {item.originalUrl}
-                  </a>
-                </div>
-                <p className="text-lg font-semibold mt-2">Ad Link:</p>
-                <div className="max-w-full truncate overflow-hidden whitespace-nowrap">
-                  <a
-                    className="text-blue-500 "
-                    href={`${location.origin}/ad/${item.shortId}`}
-                    target="_blank"
-                  >
-                    {`${location.origin}/ad/${item.shortId}`}
-                  </a>
-                </div>
-                <p className="text-lg font-semibold mt-2">Click:</p>
-                <p className="text-gray-700">{item.clicks}</p>
-              </div>
-              <div className="absolute top-5 right-3">
-                <BiTrash
-                  onClick={(_) => handleDelete(item.shortId)}
-                  className="text-gray-600 hover:text-red-500 cursor-pointer hover:bg-stone-100  rounded-md bg-opacity-15"
-                  size={20}
-                />
-              </div>
-            </div>
+            <AdGridCard item={item} index={index} handleDelete={handleDelete} />
           ))}
         </div>
       ) : (

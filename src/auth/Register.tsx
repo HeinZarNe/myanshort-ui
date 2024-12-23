@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
+import { Header } from "../Header";
+import { notify } from "../Routes";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -36,13 +38,17 @@ export default function Register() {
       const response = await registerUser(formData);
 
       if (response?.status === 201) {
-        navigate("/profile");
+        notify(response.data?.message, "success");
+        navigate("/");
       }
     } catch (error) {
       console.error("Error registering user:", error);
+
       if ((error as any).status == 409) {
+        notify("Email already exists", "error");
         setErrors({ server: "Email already exists" });
       } else {
+        notify("Failed to register user", "error");
         setErrors({ server: "Failed to register user" });
       }
     }
@@ -59,81 +65,106 @@ export default function Register() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Register</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-          {errors.username && (
-            <p className="text-red-500 text-sm">{errors.username}</p>
+    <div className="container mx-auto px-2 py-4 sm:p-4 flex flex-col gap-5  items-center">
+      <Header />
+      <div className="w-full sm:w-[450px] mx-auto bg-white shadow-lg rounded-lg p-2 py-4 sm:p-5">
+        <h1 className="text-2xl font-bold mb-4">Register</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              className={`px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+                !errors.username
+                  ? "border-gray-300 focus:ring-blue-500"
+                  : "border-red-500 focus:ring-red-500"
+              }`}
+            />
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+                !errors.email
+                  ? "border-gray-300 focus:ring-blue-500"
+                  : "border-red-500 focus:ring-red-500"
+              }`}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+                !errors.password
+                  ? "border-gray-300 focus:ring-blue-500"
+                  : "border-red-500 focus:ring-red-500"
+              }`}
+            />
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`px-4 py-2 w-full border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+                !errors.confirmPassword
+                  ? "border-gray-300 focus:ring-blue-500"
+                  : "border-red-500 focus:ring-red-500"
+              }`}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+            )}
+          </div>
+          {errors.server && (
+            <p className="text-red-500 text-sm">{errors.server}</p>
           )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email}</p>
-          )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
-          )}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-          )}
-        </div>
-        {errors.server && (
-          <p className="text-red-500 text-sm">{errors.server}</p>
-        )}
-        <div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Register
-          </button>
-        </div>
-      </form>
+          <div>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Register
+            </button>
+          </div>
+        </form>
+        <p className="text-sm mt-3">
+          Already have an account?
+          <a href="/Login" className="text-blue-700 ms-1">
+            Login
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

@@ -1,16 +1,5 @@
 import { createContext, useState, ReactNode } from "react";
-
-export interface AdLink {
-  originalUrl: string;
-  shortId: string;
-  clicks: number;
-  createdAt: string;
-}
-
-export interface AdLinkContextType {
-  data: AdLink[];
-  setData: (data: AdLink[]) => void;
-}
+import { AdLink, AdLinkContextType } from "../types";
 
 export const AdLinkContext = createContext<AdLinkContextType | undefined>(
   undefined

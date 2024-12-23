@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { AdLinkContext } from "./contexStore";
+import { AdLinkContext } from "./context/adStore";
 
 export default function SearchBar({
   placeholder = "Search...",
