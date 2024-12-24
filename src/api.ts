@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
@@ -55,16 +55,19 @@ axiosInstance.interceptors.response.use(
 );
 
 export const shortenUrl = async (
-  originalUrl: string
+  originalUrl: string,
+  userId?: string | undefined
 ): Promise<AdLink | null> => {
   const isValid = validateURL(originalUrl);
   if (!isValid) {
     return null;
   }
   try {
-    const response = await axiosInstance.post(`/shorten`, {
-      originalUrl,
-    });
+    const payload: Record<string, string> = { originalUrl };
+    if (userId) {
+      payload.userId = userId;
+    }
+    const response = await axiosInstance.post(`/urls/shorten`, payload);
     return response.data;
   } catch (error) {
     console.error("Error shortening URL:", error);
@@ -74,7 +77,7 @@ export const shortenUrl = async (
 
 export const getClickCounts = async (shortId: string) => {
   try {
-    const response = await axiosInstance.get(`/click_count/${shortId}`);
+    const response = await axiosInstance.get(`/urls/click_count/${shortId}`);
     return response.data;
   } catch (error) {
     console.error("Error getting click counts:", error);
@@ -110,11 +113,24 @@ export const registerUser = async (formData: {}): Promise<
   }
 };
 
+export const googleLogin = async () => {
+  try {
+    return await axiosInstance.get("/auth/google");
+  } catch (err) {}
+};
 export const loginUser = async (formData: {}): Promise<
   AxiosResponse<any, any> | undefined
 > => {
   try {
     const response = await axiosInstance.post(`/auth/login`, formData);
+    return response;
+  } catch (err) {
+    throw err;
+  }
+};
+export const deleteAccount = async () => {
+  try {
+    const response = await axiosInstance.delete(`/users/delete-account`);
     return response;
   } catch (err) {
     throw err;
@@ -133,7 +149,7 @@ export const verifyEmail = async (email: string) => {
 
 export const getProfile = async (): Promise<AxiosResponse<any, any>> => {
   try {
-    const response = await axiosInstance.get(`/profile`);
+    const response = await axiosInstance.get(`/users/profile`);
     return response;
   } catch (error) {
     console.error("Error fetching profile:", error);

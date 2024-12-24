@@ -1,4 +1,5 @@
 export interface AdLink {
+  userId?: string;
   originalUrl: string;
   shortId: string;
   clicks: number;
@@ -21,7 +22,7 @@ export interface AdGridCardProps {
 }
 export interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
 }
 
@@ -30,6 +31,7 @@ export interface AuthContextType {
   token: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  login: (token: string, refreshToken: string) => void;
+  loading: boolean;
+  login: (token: string, refreshToken: string, user: User) => void;
   logout: () => void;
 }

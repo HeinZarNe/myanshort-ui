@@ -38,7 +38,7 @@ export default function RedirectBtn({ shortId }: { shortId: string }) {
 
   const formatLink = (shortId: string) => {
     const api = import.meta.env.VITE_BACKEND_API;
-    const url = `${api}/${shortId}`;
+    const url = `${api}/url/${shortId}`;
     if (!/^https?:\/\//i.test(url)) {
       return `https://${url}`;
     }

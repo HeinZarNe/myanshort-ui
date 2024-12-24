@@ -46,6 +46,7 @@ export default function AdLinkList() {
   const handleSortClicks = () => {
     setIsSortByClicksDescending((prev) => !prev);
   };
+
   const handleDelete = async (id: string) => {
     try {
       await deleteAd(id);
@@ -57,6 +58,7 @@ export default function AdLinkList() {
       notify("Failed to delete ad link", "error");
     }
   };
+
   return (
     <div className="container mx-auto sm:p-4 ">
       <div className="flex flex-row items-center justify-center sm:justify-between flex-wrap gap-1 mb-4">

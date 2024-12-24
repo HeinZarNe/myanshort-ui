@@ -1,20 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Header } from "./Header";
+import { useEffect, useState } from "react";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { loginUser } from "./api";
 import { notify } from "./Routes";
 import { useAuth } from "./context/authStore";
+import { GoogleOauth } from "./GoogleOauth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
   });
+  const [searchParams] = useSearchParams();
+  const message = searchParams.get("message");
+
+  useEffect(() => {
+    if (message) {
+      notify(message, "success");
+      notify(message || "", "success");
+      window.history.replaceState({}, document.title, "/login");
+    }
+  }, []);
+
   const [errors, setErrors] = useState<
     Partial<typeof formData> & { server?: string }
   >({});
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -38,7 +49,11 @@ export default function Login() {
 
       if (response?.status === 200) {
         notify(response.data.message, "success");
-        login(response.data.token, response.data.refreshToken);
+        login(
+          response.data.token,
+          response.data.refreshToken,
+          response.data.user
+        );
         navigate("/");
       }
     } catch (error) {
@@ -54,11 +69,17 @@ export default function Login() {
     if (!data.password) errors.password = "Password is required";
     return errors;
   };
-
+  if (loading) {
+    return "";
+  }
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
   return (
     <div className="container mx-auto p-4 flex flex-col gap-5  items-center ">
-      <Header />
-      <div className="w-full sm:w-[350px] mx-auto bg-white shadow-lg rounded-lg p-5">
+      <div className="w-full sm:w-[350px] mx-auto bg-white shadow-lg rounded-lg p-5 border border-gray-200">
+        <GoogleOauth />
+        <p className="text-gray-600">or</p>
         <h1 className="text-2xl font-bold mb-4 ">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -107,9 +128,10 @@ export default function Login() {
           <div>
             <button
               type="submit"
+              disabled={loading}
               className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Login
+              {loading ? "..." : "Login"}
             </button>
           </div>
         </form>

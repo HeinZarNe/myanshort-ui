@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
-import { Header } from "../Header";
 import { notify } from "../Routes";
+import { useAuth } from "../context/authStore";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,6 +11,7 @@ export default function Register() {
     password: "",
     confirmPassword: "",
   });
+  const { isAuthenticated, loading } = useAuth();
   const [errors, setErrors] = useState<
     Partial<typeof formData> & { server?: string }
   >({});
@@ -38,7 +39,7 @@ export default function Register() {
       const response = await registerUser(formData);
 
       if (response?.status === 201) {
-        notify(response.data?.message, "success");
+        notify("A Verification email is sent to your email.", "success");
         navigate("/");
       }
     } catch (error) {
@@ -63,10 +64,14 @@ export default function Register() {
       errors.confirmPassword = "Passwords do not match";
     return errors;
   };
-
+  if (loading) {
+    return "";
+  }
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
   return (
     <div className="container mx-auto px-2 py-4 sm:p-4 flex flex-col gap-5  items-center">
-      <Header />
       <div className="w-full sm:w-[450px] mx-auto bg-white shadow-lg rounded-lg p-2 py-4 sm:p-5">
         <h1 className="text-2xl font-bold mb-4">Register</h1>
         <form onSubmit={handleSubmit} className="space-y-4">

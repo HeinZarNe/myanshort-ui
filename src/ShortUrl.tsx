@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { FaClipboard } from "react-icons/fa";
 import { AdLink } from "./types";
 import { notify } from "./Routes";
+import { useAuth } from "./context/authStore";
 
 export const validateURL = (url: string) => {
   const pattern = new RegExp(
@@ -24,6 +25,7 @@ export default function ShortUrl() {
   const [isValid, setIsValid] = useState(true);
   const [shortId, setShortId] = useState<string>("");
   const lastSubmitTime = useRef<number | null>(null);
+  const { isAuthenticated, user } = useAuth();
   const context = useContext(AdLinkContext);
 
   if (!context) {
@@ -56,8 +58,8 @@ export default function ShortUrl() {
     }
 
     try {
-      const response = await shortenUrl(inputValue);
-
+      const response = await shortenUrl(inputValue, user?.id);
+      console.log(user);
       if (!response || !response.shortId) {
         notify("Error: Invalid response from server", "error");
         return;
@@ -66,12 +68,20 @@ export default function ShortUrl() {
       setShortId(response.shortId);
       notify("URL shortened successfully!", "success");
 
-      const newAd: AdLink = {
-        originalUrl: inputValue,
-        shortId: response.shortId,
-        clicks: 0,
-        createdAt: dayjs().toISOString(),
-      };
+      const newAd: AdLink = isAuthenticated
+        ? {
+            userId: user?.id,
+            originalUrl: inputValue,
+            shortId: response.shortId,
+            clicks: 0,
+            createdAt: dayjs().toISOString(),
+          }
+        : {
+            originalUrl: inputValue,
+            shortId: response.shortId,
+            clicks: 0,
+            createdAt: dayjs().toISOString(),
+          };
 
       setData([newAd, ...data]);
     } catch (error) {
@@ -96,7 +106,7 @@ export default function ShortUrl() {
   };
 
   return (
-    <div className="flex flex-col items-center  p-2 w-full xs:w-fit sm:p-4 bg-white shadow-md rounded-lg">
+    <div className="flex flex-col items-center  p-2 w-full xs:w-fit">
       <form
         onSubmit={handleSubmit}
         className="flex flex-row justify-center flex-wrap items-center  gap-4 w-full xs:w-fit"

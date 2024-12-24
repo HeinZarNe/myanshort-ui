@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Header } from "./Header";
 import { verifyEmail } from "./api";
 import { notify } from "./Routes";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +45,6 @@ export const EmailVerify = () => {
   };
   return (
     <div className="flex flex-col items-center gap-5 p-2 py-4 sm:p-5">
-      <Header />
       <div className="p-2 py-4 sm:p-5 shadow-lg gap-1 rounded-lg flex flex-col ">
         <div>
           <span className="text-lg ">Request Verification Email</span>
