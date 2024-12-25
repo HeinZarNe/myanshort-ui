@@ -4,6 +4,7 @@ import { useAuth } from "./context/authStore";
 import "react-toastify/dist/ReactToastify.css";
 import { deleteAccount } from "./api";
 import { notify } from "./Routes";
+import { ConfirmModal } from "./ConfirmModal";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -69,32 +70,7 @@ export default function Profile() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-5">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Confirm Deletion</h2>
-            <p className="mb-4">
-              Are you sure you want to delete your account? Your Urls will be
-              erased too. This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={closeModal}
-                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  handleDelete();
-                  closeModal();
-                }}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-bold"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmModal handleAction={handleDelete} closeModal={closeModal} />
       )}
     </div>
   );

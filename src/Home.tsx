@@ -1,9 +1,25 @@
+import { useSearchParams } from "react-router-dom";
 import AdLinkList from "./AdLinkList";
 import { useAuth } from "./context/authStore";
 import ShortUrl from "./ShortUrl";
+import { useEffect } from "react";
+import { notify } from "./Routes";
 
 export default function Home() {
   const { isAuthenticated, loading } = useAuth();
+  const [searchParams] = useSearchParams();
+  const message = searchParams.get("message");
+  const error = searchParams.get("error");
+
+  useEffect(() => {
+    if (message) {
+      notify(message, "success");
+      window.history.replaceState({}, document.title, "/login");
+    } else if (error) {
+      notify(error, "error");
+      window.history.replaceState({}, document.title, "/login");
+    }
+  }, []);
   return (
     <div className="max-w-screen  flex flex-col p-2   gap-1  items-center">
       <h1 className="text-xl sm:text-3xl font-bold text-center">

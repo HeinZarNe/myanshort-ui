@@ -5,8 +5,7 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { redirect, useNavigate } from "react-router-dom";
-import { getProfile } from "../api";
+import { useNavigate } from "react-router-dom";
 import { AuthContextType, User } from "../types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

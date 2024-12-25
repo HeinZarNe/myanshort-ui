@@ -7,15 +7,18 @@ import dayjs from "dayjs";
 import { BiTrash } from "react-icons/bi";
 import { notify } from "./Routes";
 import { AdGridCard } from "./AdGridCard";
+import { CgSpinner } from "react-icons/cg";
+import { BsArrowClockwise } from "react-icons/bs";
 
 export default function AdLinkList() {
   const context = useContext(AdLinkContext);
   if (!context) {
     throw new Error("AdLinkList must be used within an AdLinkProvider");
   }
-
   const { data, setData } = context;
   const [searchQuery, setSearchQuery] = useState("");
+  const [refetch, setRefetch] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSortByClicksDescending, setIsSortByClicksDescending] =
     useState(false);
   const [view, setView] = useState("table");
@@ -23,11 +26,13 @@ export default function AdLinkList() {
   // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const res = await getAdLinks();
       setData(res || []);
+      setIsLoading(false);
     };
     fetchData();
-  }, [setData]);
+  }, [setData, refetch]);
 
   const filteredAndSortedData = useMemo(() => {
     let filtered = data.filter(
@@ -35,7 +40,6 @@ export default function AdLinkList() {
         item.originalUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.shortId.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
     if (isSortByClicksDescending) {
       filtered = [...filtered].sort((a, b) => b.clicks - a.clicks);
     }
@@ -65,6 +69,24 @@ export default function AdLinkList() {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold">Links</h1>
           <div className="flex flex-row items-center gap-1">
+            <button
+              disabled={isLoading}
+              onClick={() => setRefetch((prev) => !prev)}
+              className={`border-r pr-1 border-black ${
+                view === "table" ? "text-blue-500" : "text-gray-500"
+              }`}
+            >
+              {isLoading ? (
+                <CgSpinner
+                  size={20}
+                  className={`transition-transform ${
+                    isLoading ? "animate-spin" : ""
+                  }`}
+                />
+              ) : (
+                <BsArrowClockwise />
+              )}
+            </button>
             <button
               onClick={() => setView("table")}
               className={`border-r pr-1 border-black ${
@@ -131,7 +153,7 @@ export default function AdLinkList() {
             <tbody>
               {filteredAndSortedData.map((item, index) => (
                 <tr key={index} className="hover:bg-gray-100">
-                  <td className="px-4 py-2 border-b  whitespace-nowrap">
+                  <td className="px-4 py-2 border-b  max-w-[200px] sm:max-w-[500px] break-words ">
                     <a
                       className="text-blue-500 "
                       href={item.originalUrl}
@@ -142,7 +164,7 @@ export default function AdLinkList() {
                   </td>
                   <td className="px-4 py-2 border-b">
                     <a
-                      className="text-blue-500 whitespace-nowrap"
+                      className="text-blue-500 max-w-[200px] sm:max-w-[500px] break-words"
                       href={`${location.origin}/ad/${item.shortId}`}
                       target="_blank"
                     >

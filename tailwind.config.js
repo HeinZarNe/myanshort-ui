@@ -6,6 +6,7 @@ export default {
       screens: {
         xs: "480px", // Custom breakpoint for xs
       },
+
       fontFamily: {
         ubuntu: ['"Ubuntu"', "sans-serif"], // Replace with your font name
       },

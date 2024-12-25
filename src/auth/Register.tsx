@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { registerUser } from "../api";
 import { notify } from "../Routes";
 import { useAuth } from "../context/authStore";
+import { GoogleOauth } from "../GoogleOauth";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -73,6 +74,8 @@ export default function Register() {
   return (
     <div className="container mx-auto px-2 py-4 sm:p-4 flex flex-col gap-5  items-center">
       <div className="w-full sm:w-[450px] mx-auto bg-white shadow-lg rounded-lg p-2 py-4 sm:p-5">
+        <GoogleOauth />
+        <p className="text-gray-600">or</p>
         <h1 className="text-2xl font-bold mb-4">Register</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

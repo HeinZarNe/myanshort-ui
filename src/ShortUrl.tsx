@@ -59,7 +59,6 @@ export default function ShortUrl() {
 
     try {
       const response = await shortenUrl(inputValue, user?.id);
-      console.log(user);
       if (!response || !response.shortId) {
         notify("Error: Invalid response from server", "error");
         return;
@@ -67,17 +66,20 @@ export default function ShortUrl() {
 
       setShortId(response.shortId);
       notify("URL shortened successfully!", "success");
-
+      let url = "";
+      if (!/^https?:\/\//i.test(inputValue)) {
+        url = `https://${inputValue}`;
+      }
       const newAd: AdLink = isAuthenticated
         ? {
             userId: user?.id,
-            originalUrl: inputValue,
+            originalUrl: url,
             shortId: response.shortId,
             clicks: 0,
             createdAt: dayjs().toISOString(),
           }
         : {
-            originalUrl: inputValue,
+            originalUrl: url,
             shortId: response.shortId,
             clicks: 0,
             createdAt: dayjs().toISOString(),

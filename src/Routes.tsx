@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AdPage from "./AdPage";
 import Home from "./Home";
 import Profile from "./Profile";

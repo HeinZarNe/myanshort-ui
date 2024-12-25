@@ -35,3 +35,13 @@ export interface AuthContextType {
   login: (token: string, refreshToken: string, user: User) => void;
   logout: () => void;
 }
+
+export interface ConfrimModalProps {
+  closeModal?: () => void; // Function to close the modal
+  handleAction: () => void; // Function to handle the confirm action
+  message?: string; // The message to display in the modal
+  cancelText?: string; // Text for the cancel button
+  confirmText?: string; // Text for the confirm button
+  cancelClassname?: string; // Optional CSS class for the cancel button
+  confirmClassname?: string; // Optional CSS class for the confirm button
+}

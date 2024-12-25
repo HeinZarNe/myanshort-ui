@@ -12,11 +12,14 @@ export default function Login() {
   });
   const [searchParams] = useSearchParams();
   const message = searchParams.get("message");
+  const error = searchParams.get("error");
 
   useEffect(() => {
     if (message) {
       notify(message, "success");
-      notify(message || "", "success");
+      window.history.replaceState({}, document.title, "/login");
+    } else if (error) {
+      notify(error, "error");
       window.history.replaceState({}, document.title, "/login");
     }
   }, []);
@@ -32,6 +35,7 @@ export default function Login() {
       ...prevData,
       [name]: value,
     }));
+    setErrors({});
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -46,7 +50,6 @@ export default function Login() {
     try {
       // Submit form data to the server
       const response = await loginUser(formData);
-
       if (response?.status === 200) {
         notify(response.data.message, "success");
         login(
@@ -58,7 +61,8 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error Login user:", error);
-      notify("Something went wrong", "error");
+      setErrors({ usernameOrEmail: " ", password: " " });
+      notify("Double-check your credentials and try again.", "error");
     }
   };
 

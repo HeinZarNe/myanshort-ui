@@ -1,5 +1,4 @@
 import { BsGoogle } from "react-icons/bs";
-import { googleLogin } from "./api";
 
 export const GoogleOauth = () => {
   return (
