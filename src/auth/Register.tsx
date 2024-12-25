@@ -4,6 +4,7 @@ import { registerUser } from "../api";
 import { notify } from "../Routes";
 import { useAuth } from "../context/authStore";
 import { GoogleOauth } from "../GoogleOauth";
+import { CgSpinner } from "react-icons/cg";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -12,7 +13,8 @@ export default function Register() {
     password: "",
     confirmPassword: "",
   });
-  const { isAuthenticated, loading } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
   const [errors, setErrors] = useState<
     Partial<typeof formData> & { server?: string }
   >({});
@@ -29,6 +31,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate form data
+    setLoading(true);
     const newErrors = validateForm(formData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -40,8 +43,9 @@ export default function Register() {
       const response = await registerUser(formData);
 
       if (response?.status === 201) {
-        notify("A Verification email is sent to your email.", "success");
-        navigate("/");
+        notify("Success", "success");
+
+        navigate(`/success-register?email=${formData.email}`);
       }
     } catch (error) {
       console.error("Error registering user:", error);
@@ -54,6 +58,7 @@ export default function Register() {
         setErrors({ server: "Failed to register user" });
       }
     }
+    setLoading(false);
   };
 
   const validateForm = (data: typeof formData) => {
@@ -65,9 +70,7 @@ export default function Register() {
       errors.confirmPassword = "Passwords do not match";
     return errors;
   };
-  if (loading) {
-    return "";
-  }
+
   if (isAuthenticated) {
     return <Navigate to="/" />;
   }
@@ -160,8 +163,9 @@ export default function Register() {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm  font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center"
             >
+              {loading ? <CgSpinner className="animate-spin" /> : ""}
               Register
             </button>
           </div>

@@ -10,12 +10,14 @@ import { EmailVerify } from "./EmailVerify";
 import { Header } from "./Header";
 import PrivateRoute from "./PrivateRoute";
 import GoogleCallback from "./GoogleCallBack";
+import { ExpireUrl } from "./ExpiredUrl";
+import { SuccessRegister } from "./SuccessRegister";
 export const notify = (message: string, type: "success" | "error") => {
   toast[type](message);
 };
 function AppRoutes() {
   return (
-    <div>
+    <div className="bg-slate-50 min-h-[100vh]">
       <ToastContainer
         autoClose={3000}
         hideProgressBar
@@ -41,6 +43,8 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="/verify-email" element={<EmailVerify />} />
+        <Route path="/expired-url" element={<ExpireUrl />} />
+        <Route path="/success-register" element={<SuccessRegister />} />
       </Routes>
     </div>
   );

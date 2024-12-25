@@ -29,11 +29,12 @@ export const EmailVerify = () => {
       }
     } catch (error) {
       console.error("Error registering user:", error);
+
       if ((error as any)?.status === 400) {
         notify("User is aready verified", "error");
         navigate("/login");
-      } else if ((error as any)?.status === 400) {
-        notify("User with this email not found", "error");
+      } else if ((error as any)?.status === 404) {
+        notify("User with this email is not found", "error");
         navigate("/register");
       } else if ((error as any)?.status === 500) {
         notify("Internal server error", "error");
@@ -45,7 +46,7 @@ export const EmailVerify = () => {
   };
   return (
     <div className="flex flex-col items-center gap-5 p-2 py-4 sm:p-5">
-      <div className="p-2 py-4 sm:p-5 shadow-lg gap-1 rounded-lg flex flex-col ">
+      <div className="p-2 py-4 sm:p-5 shadow-lg gap-1 rounded-lg flex flex-col bg-white ">
         <div>
           <span className="text-lg ">Request Verification Email</span>
           <p className="text-gray-700 text-sm">
@@ -56,7 +57,7 @@ export const EmailVerify = () => {
           onSubmit={handleSubmit}
           className="flex flex-col items-start gap-3"
         >
-          <div>
+          <div className="w-full">
             <label className="block text-sm font-medium text-gray-700">
               Email
             </label>

@@ -4,12 +4,14 @@ import { loginUser } from "./api";
 import { notify } from "./Routes";
 import { useAuth } from "./context/authStore";
 import { GoogleOauth } from "./GoogleOauth";
+import { CgSpinner } from "react-icons/cg";
 
 export default function Login() {
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const message = searchParams.get("message");
   const error = searchParams.get("error");
@@ -28,7 +30,7 @@ export default function Login() {
     Partial<typeof formData> & { server?: string }
   >({});
   const navigate = useNavigate();
-  const { login, isAuthenticated, loading } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -41,6 +43,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Validate form data
+    setLoading(true);
     const newErrors = validateForm(formData);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -64,6 +67,7 @@ export default function Login() {
       setErrors({ usernameOrEmail: " ", password: " " });
       notify("Double-check your credentials and try again.", "error");
     }
+    setLoading(false);
   };
 
   const validateForm = (data: typeof formData) => {
@@ -73,9 +77,7 @@ export default function Login() {
     if (!data.password) errors.password = "Password is required";
     return errors;
   };
-  if (loading) {
-    return "";
-  }
+
   if (isAuthenticated) {
     return <Navigate to="/" />;
   }
@@ -133,9 +135,10 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm  font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center gap-1"
             >
-              {loading ? "..." : "Login"}
+              {loading ? <CgSpinner className="animate-spin" /> : ""}
+              Login
             </button>
           </div>
         </form>
