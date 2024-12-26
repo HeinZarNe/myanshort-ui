@@ -2,10 +2,12 @@ import { useState } from "react";
 import { verifyEmail } from "./api";
 import { notify } from "./Routes";
 import { useNavigate } from "react-router-dom";
+import { CgSpinner } from "react-icons/cg";
 
 export const EmailVerify = () => {
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -20,17 +22,18 @@ export const EmailVerify = () => {
     }
 
     try {
+      setLoading(true);
       // Submit form data to the server
       const response = await verifyEmail(email);
 
-      if (response?.status === 201) {
-        notify("Verification Email Sent", "success");
-        navigate("/login");
-      }
+      notify("Verification Email Sent", "success");
+      setLoading(false);
+      navigate("/login");
     } catch (error) {
       console.error("Error registering user:", error);
 
       if ((error as any)?.status === 400) {
+        setLoading(false);
         notify("User is aready verified", "error");
         navigate("/login");
       } else if ((error as any)?.status === 404) {
@@ -78,9 +81,11 @@ export const EmailVerify = () => {
           </div>
           <div>
             <button
+              disabled={loading}
               type="submit"
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full py-2 flex items-center justify-center gap-1 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
+              {loading ? <CgSpinner className="animate-spin" /> : ""}
               Request
             </button>
           </div>

@@ -6,6 +6,7 @@ import { FaClipboard } from "react-icons/fa";
 import { AdLink } from "./types";
 import { notify } from "./Routes";
 import { useAuth } from "./context/authStore";
+import { CgSpinner } from "react-icons/cg";
 
 export const validateURL = (url: string) => {
   const pattern = new RegExp(
@@ -23,6 +24,7 @@ export const validateURL = (url: string) => {
 export default function ShortUrl() {
   const [inputValue, setInputValue] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [shortId, setShortId] = useState<string>("");
   const lastSubmitTime = useRef<number | null>(null);
   const { isAuthenticated, user } = useAuth();
@@ -58,6 +60,7 @@ export default function ShortUrl() {
     }
 
     try {
+      setLoading(true);
       const response = await shortenUrl(inputValue, user?.id);
       if (!response || !response.shortId) {
         notify("Error: Invalid response from server", "error");
@@ -86,8 +89,10 @@ export default function ShortUrl() {
           };
 
       setData([newAd, ...data]);
+      setLoading(false);
     } catch (error) {
       console.error("Error:", error);
+      setLoading(false);
 
       const status = (error as { status?: string }).status;
 
@@ -128,8 +133,9 @@ export default function ShortUrl() {
         />
         <button
           type="submit"
-          className="sm:px-4 px-2 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="sm:px-4 px-2 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-1"
         >
+          {loading ? <CgSpinner className="animate-spin" /> : ""}
           Add Ad
         </button>
       </form>
