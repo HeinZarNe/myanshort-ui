@@ -3,10 +3,10 @@ import { BiTrash } from "react-icons/bi";
 import { AdGridCardProps } from "./types";
 
 export const AdGridCard = React.memo(
-  ({ item, index, handleDelete }: AdGridCardProps) => {
+  ({ item, handleDelete }: AdGridCardProps) => {
     const {} = item;
     return (
-      <div key={index} className="p-4 border rounded-lg shadow-md relative">
+      <div className="p-4 border rounded-lg shadow-md relative">
         <div className="w-full">
           <p className="text-lg font-semibold">Original URL:</p>
           <div className="max-w-full truncate overflow-hidden whitespace-nowrap">

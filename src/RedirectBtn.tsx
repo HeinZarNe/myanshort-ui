@@ -46,18 +46,20 @@ export default function RedirectBtn({ shortId }: { shortId: string }) {
   };
 
   return (
-    <div
-      id="btn"
-      className={`w-fit py-1 px-3 rounded-sm text-lg flex items-center justify-center text-white ${
-        isDisabled ? "bg-gray-500" : "bg-red-500"
-      }`}
-    >
-      <a
-        href={isDisabled ? "#" : formatLink(shortId)}
-        className={isDisabled ? "pointer-events-none" : ""}
+    <div className="w-full">
+      <div
+        id="btn"
+        className={`w-fit py-1 px-3 rounded-sm mx-auto text-lg flex items-center justify-center text-white ${
+          isDisabled ? "bg-gray-500" : "bg-red-500"
+        }`}
       >
-        {isDisabled ? `wait ${counter}s` : "Go to Link"}
-      </a>
+        <a
+          href={isDisabled ? "#" : formatLink(shortId)}
+          className={isDisabled ? "pointer-events-none" : ""}
+        >
+          {isDisabled ? `wait ${counter}s` : "Go to Link"}
+        </a>
+      </div>
     </div>
   );
 }

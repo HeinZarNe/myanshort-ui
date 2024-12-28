@@ -2,13 +2,12 @@ import { useContext, useEffect, useState, useMemo } from "react";
 import { deleteAd, getAdLinks } from "./api";
 import { AdLinkContext } from "./context/adStore";
 import SearchBar from "./SearchBar";
-import { FaBoxOpen, FaSortDown, FaTable, FaTh } from "react-icons/fa";
-import dayjs from "dayjs";
-import { BiTrash } from "react-icons/bi";
+import { FaBoxOpen, FaTable, FaTh } from "react-icons/fa";
 import { notify } from "./Routes";
 import { AdGridCard } from "./AdGridCard";
 import { CgSpinner } from "react-icons/cg";
 import { BsArrowClockwise } from "react-icons/bs";
+import { AdTable } from "./AdTable";
 
 export default function AdLinkList() {
   const context = useContext(AdLinkContext);
@@ -46,10 +45,6 @@ export default function AdLinkList() {
 
     return filtered;
   }, [data, searchQuery, isSortByClicksDescending]);
-
-  const handleSortClicks = () => {
-    setIsSortByClicksDescending((prev) => !prev);
-  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -112,80 +107,23 @@ export default function AdLinkList() {
       </div>
 
       {filteredAndSortedData.length === 0 ? (
-        <div className="flex items-center  justify-center font-semibold text-gray-300">
+        <div className="flex items-center  justify-center font-semibold text-gray-300 h-[200px]">
           <FaBoxOpen size={100} />
         </div>
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-4">
           {filteredAndSortedData.map((item, index) => (
-            <AdGridCard item={item} index={index} handleDelete={handleDelete} />
+            <AdGridCard key={index} item={item} handleDelete={handleDelete} />
           ))}
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 border-b whitespace-nowrap">
-                  Original URL
-                </th>
-                <th className="px-4 py-2 border-b whitespace-nowrap">Ad Url</th>
-                <th className="px-4 py-2 border-b whitespace-nowrap">
-                  <div className="flex items-baseline">
-                    Clicks
-                    <button onClick={handleSortClicks} className="ml-2">
-                      <FaSortDown
-                        className={`h-full ${
-                          isSortByClicksDescending
-                            ? "text-blue-500"
-                            : "text-gray-500"
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </th>
-                <th className="px-4 py-2 border-b whitespace-nowrap">
-                  Created At
-                </th>
-                <th className="px-4 py-2 border-b whitespace-nowrap"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAndSortedData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="px-4 py-2 border-b  max-w-[200px] sm:max-w-[500px] break-words ">
-                    <a
-                      className="text-blue-500 "
-                      href={item.originalUrl}
-                      target="_blank"
-                    >
-                      {item.originalUrl}
-                    </a>
-                  </td>
-                  <td className="px-4 py-2 border-b">
-                    <a
-                      className="text-blue-500 max-w-[200px] sm:max-w-[500px] break-words"
-                      href={`${location.origin}/ad/${item.shortId}`}
-                      target="_blank"
-                    >
-                      {`${location.origin}/ad/${item.shortId}`}
-                    </a>
-                  </td>
-                  <td className="px-4 py-2 border-b">{item.clicks}</td>
-                  <td className="px-4 py-2 border-b text-center">
-                    {dayjs(item.createdAt).format("DD.MM.YYYY")}
-                  </td>
-                  <td className="px-4 py-2 border-b text-center">
-                    <BiTrash
-                      onClick={(_) => handleDelete(item.shortId)}
-                      className="text-gray-600 hover:text-red-500 cursor-pointer hover:bg-stone-100  rounded-md bg-opacity-15"
-                      size={20}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <AdTable
+            handleDelete={handleDelete}
+            setIsSortByClicksDescending={setIsSortByClicksDescending}
+            filteredAndSortedData={filteredAndSortedData}
+            isSortByClicksDescending={isSortByClicksDescending}
+          />
         </div>
       )}
     </div>

@@ -1,4 +1,6 @@
 export interface AdLink {
+  _id?: string;
+  name: string;
   userId?: string;
   originalUrl: string;
   shortId: string;
@@ -12,13 +14,20 @@ export interface AdLinkContextType {
 }
 
 export interface AdGridCardProps {
-  index: number;
   item: {
     originalUrl: string;
     shortId: string;
     clicks: number;
   };
   handleDelete: (arg0: string) => void;
+}
+export interface AdTableProps {
+  filteredAndSortedData: Array<AdLink>;
+  handleDelete: (shortId: string) => void;
+  isSortByClicksDescending: boolean;
+  setIsSortByClicksDescending: (
+    value: boolean | ((prev: boolean) => boolean)
+  ) => void;
 }
 export interface User {
   id: string;

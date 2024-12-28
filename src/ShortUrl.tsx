@@ -1,7 +1,6 @@
 import { useContext, useRef, useState } from "react";
 import { shortenUrl } from "./api";
 import { AdLinkContext } from "./context/adStore";
-import dayjs from "dayjs";
 import { FaClipboard } from "react-icons/fa";
 import { AdLink } from "./types";
 import { notify } from "./Routes";
@@ -22,12 +21,13 @@ export const validateURL = (url: string) => {
 };
 
 export default function ShortUrl() {
-  const [inputValue, setInputValue] = useState("");
+  const [link, setLink] = useState("");
+  const [name, setName] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [loading, setLoading] = useState(false);
   const [shortId, setShortId] = useState<string>("");
   const lastSubmitTime = useRef<number | null>(null);
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
   const context = useContext(AdLinkContext);
 
   if (!context) {
@@ -35,12 +35,18 @@ export default function ShortUrl() {
   }
 
   const { data, setData } = context;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { isAuthenticated } = useAuth();
+  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShortId("");
     const value = e.target.value;
-    setInputValue(value);
+    setLink(value);
     setIsValid(validateURL(value));
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShortId("");
+    const value = e.target.value;
+    setName(value);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,58 +58,40 @@ export default function ShortUrl() {
       return;
     }
     lastSubmitTime.current = now;
-
-    if (!validateURL(inputValue)) {
+    if (!validateURL(link)) {
       setIsValid(false);
       notify("Invalid URL. Please enter a valid URL.", "error");
       return;
     }
-
     try {
       setLoading(true);
-      const response = await shortenUrl(inputValue, user?.id);
-      if (!response || !response.shortId) {
+      const response = await shortenUrl(link, name, user?.id);
+      if (!response || !response.newLink) {
+        console.log(response);
         notify("Error: Invalid response from server", "error");
+        setLoading(false);
         return;
       }
-
-      setShortId(response.shortId);
+      setShortId(response.newLink.shortId);
       notify("URL shortened successfully!", "success");
-      let url = "";
-      if (!/^https?:\/\//i.test(inputValue)) {
-        url = `https://${inputValue}`;
-      }
-      const newAd: AdLink = isAuthenticated
-        ? {
-            userId: user?.id,
-            originalUrl: url,
-            shortId: response.shortId,
-            clicks: 0,
-            createdAt: dayjs().toISOString(),
-          }
-        : {
-            originalUrl: url,
-            shortId: response.shortId,
-            clicks: 0,
-            createdAt: dayjs().toISOString(),
-          };
-
-      setData([newAd, ...data]);
+      const newAd: AdLink = response.newLink;
       setLoading(false);
+      !response.exists ? setData([newAd, ...data]) : "";
     } catch (error) {
       console.error("Error:", error);
       setLoading(false);
 
-      const status = (error as { status?: string }).status;
+      const status = (error as { status?: Number }).status;
 
-      if (status === "409") {
-        notify("URL already exists", "error");
+      if (status === 409) {
+        notify("URL is already shortened", "success");
       } else {
         notify("Error shortening URL. Please try again later.", "error");
       }
     }
 
-    setInputValue("");
+    setLink("");
+    setName("");
     setIsValid(true);
   };
 
@@ -113,27 +101,63 @@ export default function ShortUrl() {
   };
 
   return (
-    <div className="flex flex-col items-center  p-2 w-full xs:w-fit">
+    <div className="flex flex-col items-center p-2 w-full xs:w-fit">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-row justify-center flex-wrap items-center  gap-4 w-full xs:w-fit"
+        className={`flex ${
+          isAuthenticated ? "flex-col items-start" : "flex-row items-center"
+        } justify-center flex-wrap gap-2 w-full sm:w-[280px]`}
       >
-        <input
-          type="text"
-          placeholder="Enter link"
-          value={inputValue}
-          onChange={handleChange}
-          className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 flex-1 ${
-            isValid
-              ? "border-gray-300 focus:ring-blue-500"
-              : "border-red-500 focus:ring-red-500"
-          }`}
-          aria-invalid={!isValid}
-          aria-describedby={!isValid ? "error-message" : undefined}
-        />
+        {isAuthenticated ? (
+          <div className="flex flex-col w-full">
+            <label htmlFor="name" className="font-semibold mb-1 text-gray-900">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              placeholder="Enter Name"
+              value={name}
+              onChange={handleNameChange}
+              className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+                isValid
+                  ? "border-gray-300 focus:ring-blue-500"
+                  : "border-red-500 focus:ring-red-500"
+              }`}
+              aria-invalid={!isValid}
+              aria-describedby={!isValid ? "error-message" : undefined}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+        <div className="flex flex-col w-full">
+          {isAuthenticated ? (
+            <label htmlFor="link" className="font-semibold mb-1 text-gray-900">
+              Link
+            </label>
+          ) : (
+            ""
+          )}
+          <input
+            type="text"
+            name="link"
+            placeholder="google.com"
+            value={link}
+            onChange={handleLinkChange}
+            className={`px-4 py-2 border rounded-md focus:outline-none focus:ring-2 flex-1 ${
+              isValid
+                ? "border-gray-300 focus:ring-blue-500"
+                : "border-red-500 focus:ring-red-500"
+            }`}
+            aria-invalid={!isValid}
+            aria-describedby={!isValid ? "error-message" : undefined}
+          />
+        </div>
+
         <button
           type="submit"
-          className="sm:px-4 px-2 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-1"
+          className="px-4 mt-2 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-1"
         >
           {loading ? <CgSpinner className="animate-spin" /> : ""}
           Add Ad
@@ -146,7 +170,7 @@ export default function ShortUrl() {
       )}
       {shortId && (
         <div className="mt-4 p-1 w-full xs:w-fit sm:p-2 bg-green-100 border border-green-400 rounded-md flex flex-col sm:flex-row items-center">
-          <span className="text-green-700">New Link: </span>
+          <span className="text-green-700">Ad Link: </span>
           <div className="flex flex-row items-center max-w-[250px] p-1 sm:p-2 gap-1 sm:gap-2">
             <a
               href={`${location.origin}/ad/${shortId}`}

@@ -12,6 +12,7 @@ import PrivateRoute from "./PrivateRoute";
 import GoogleCallback from "./GoogleCallBack";
 import { ExpireUrl } from "./ExpiredUrl";
 import { SuccessRegister } from "./SuccessRegister";
+import { LinkDetail } from "./LinkDetail";
 export const notify = (message: string, type: "success" | "error") => {
   toast[type](message);
 };
@@ -27,7 +28,7 @@ function AppRoutes() {
         position="top-right"
       />
       <NavBar />
-      {location.pathname.includes("/ad") ? "" : <Header />}
+      {location.pathname === "/" ? <Header /> : ""}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ad/:shortId" element={<AdPage />} />
@@ -44,6 +45,14 @@ function AppRoutes() {
         <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="/verify-email" element={<EmailVerify />} />
         <Route path="/expired-url" element={<ExpireUrl />} />
+        <Route
+          path="/links/:id"
+          element={
+            <PrivateRoute>
+              <LinkDetail />
+            </PrivateRoute>
+          }
+        />
         <Route path="/success-register" element={<SuccessRegister />} />
       </Routes>
     </div>
