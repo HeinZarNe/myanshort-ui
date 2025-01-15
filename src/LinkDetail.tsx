@@ -48,7 +48,7 @@ export const LinkDetail = () => {
     if (!id) return navigate("/");
     if (data && updateName) {
       try {
-        const response = await modifyUrl(id, updateName, updateLink);
+        await modifyUrl(id, updateName, updateLink);
         setData({ ...data, name: updateName });
         notify("Success", "success");
         setUpdating({ ...updating, name: false });

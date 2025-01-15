@@ -5,7 +5,8 @@ export default function ShowCount() {
   const [count, setCount] = useState(0);
   const [shortId, setshortId] = useState("");
   async function fetchCount() {
-    const { clicks } = await getClickCounts(shortId || "");
+    const response = await getClickCounts(shortId || "");
+    const { clicks } = response.data;
     setCount(clicks);
   }
 

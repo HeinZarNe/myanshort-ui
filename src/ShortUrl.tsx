@@ -1,4 +1,4 @@
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { shortenUrl } from "./api";
 import { AdLinkContext } from "./context/adStore";
 import { FaClipboard } from "react-icons/fa";

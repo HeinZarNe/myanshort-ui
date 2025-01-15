@@ -24,7 +24,7 @@ export const EmailVerify = () => {
     try {
       setLoading(true);
       // Submit form data to the server
-      const response = await verifyEmail(email);
+      await verifyEmail(email);
 
       notify("Verification Email Sent", "success");
       setLoading(false);
