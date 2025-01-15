@@ -90,10 +90,45 @@ export const shortenUrl = async (
   }
 };
 
+export const modifyUrl = async (id: string, name?: string, link?: string) => {
+  try {
+    const response = await axiosInstance.post(`/urls/modify/${id}`, {
+      name,
+      link,
+    });
+    return response;
+  } catch (err) {
+    console.error("Error getting click counts:", err);
+    throw err;
+  }
+};
+
+export const forgotPassword = async (email: string) => {
+  try {
+    const response = await axiosInstance.post(`/auth/forgot-password`, {
+      email,
+    });
+    return response;
+  } catch (error) {}
+};
+export const resetPassword = async (
+  email: string,
+  token: string,
+  password: string
+) => {
+  try {
+    const response = await axiosInstance.post(`/auth/reset-password`, {
+      email,
+      token,
+      password,
+    });
+    return response;
+  } catch (error) {}
+};
 export const getClickCounts = async (shortId: string) => {
   try {
     const response = await axiosInstance.get(`/urls/click_count/${shortId}`);
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Error getting click counts:", error);
     throw error;

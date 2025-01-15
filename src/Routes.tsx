@@ -13,6 +13,8 @@ import GoogleCallback from "./GoogleCallBack";
 import { ExpireUrl } from "./ExpiredUrl";
 import { SuccessRegister } from "./SuccessRegister";
 import { LinkDetail } from "./LinkDetail";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
 export const notify = (message: string, type: "success" | "error") => {
   toast[type](message);
 };
@@ -45,6 +47,8 @@ function AppRoutes() {
         <Route path="/auth/google/callback" element={<GoogleCallback />} />
         <Route path="/verify-email" element={<EmailVerify />} />
         <Route path="/expired-url" element={<ExpireUrl />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/links/:id"
           element={

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { shortenUrl } from "./api";
 import { AdLinkContext } from "./context/adStore";
 import { FaClipboard } from "react-icons/fa";
@@ -7,8 +7,8 @@ import { notify } from "./Routes";
 import { useAuth } from "./context/authStore";
 import { CgSpinner } from "react-icons/cg";
 
-export const validateURL = (url: string) => {
-  const pattern = new RegExp(
+const pattern = () => {
+  return new RegExp(
     "^(https?:\\/\\/)?" + // protocol
       "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
@@ -17,7 +17,10 @@ export const validateURL = (url: string) => {
       "(\\#[-a-z\\d_]*)?$",
     "i"
   );
-  return !!pattern.test(url);
+};
+
+export const validateURL = (url: string) => {
+  return !!pattern().test(url);
 };
 
 export default function ShortUrl() {

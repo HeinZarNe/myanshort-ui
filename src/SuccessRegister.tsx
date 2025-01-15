@@ -10,10 +10,10 @@ export const SuccessRegister = () => {
         <p className="text-xl font-semibold">Verify your email address</p>
         <MdEmail className="text-gray-400" size={70} />
         <p className="text-balance">
-          A verification email has been successfully sent to{" "}
+          A verification email has been successfully sent to
           <span className="font-semibold">{email}</span>. It may take a few
           minutes to arrive. If you don't receive the email, you can request it
-          again here:{" "}
+          again here:
           <a
             href="/verify-email"
             className="text-blue-600 font-semibold hover:text-blue-500"

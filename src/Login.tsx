@@ -46,6 +46,7 @@ export default function Login() {
     setLoading(true);
     const newErrors = validateForm(formData);
     if (Object.keys(newErrors).length > 0) {
+      setLoading(false);
       setErrors(newErrors);
       return;
     }
@@ -62,7 +63,9 @@ export default function Login() {
         );
         navigate("/");
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("Error Login user:", error);
       setErrors({ usernameOrEmail: " ", password: " " });
       notify("Double-check your credentials and try again.", "error");
@@ -142,8 +145,16 @@ export default function Login() {
             </button>
           </div>
         </form>
+        <div className="flex flex-row items-center justify-end ">
+          <a
+            href="/forgot-password"
+            className="text-blue-600  text-sm  mt-1 cursor-pointer"
+          >
+            Forgot password
+          </a>
+        </div>
         <p className="text-sm mt-3">
-          Don't have an account?
+          Create new account -
           <a href="/Register" className="text-blue-700 ms-1">
             Register
           </a>

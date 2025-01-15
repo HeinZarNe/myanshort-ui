@@ -49,7 +49,7 @@ export const AdTable: React.FC<AdTableProps> = ({
           <tr key={index} className="hover:bg-gray-100">
             <td className="px-4 py-2 border-b  max-w-[200px] sm:max-w-[500px]  ">
               {index + 1}
-            </td>{" "}
+            </td>
             <td className="px-4 py-2 border-b   sm:max-w-[500px] min-w-[200px] ">
               {item.name || "-"}
             </td>
